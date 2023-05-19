@@ -13,11 +13,11 @@ public class ScanForModbus {
         System.out.println("Network Interface: " + networkInterface);
         final List<InterfaceAddress> interfaceAddresses = networkInterface.getInterfaceAddresses();
         System.out.println("Interface Addresses: " + interfaceAddresses);
-        final ForkJoinPool pool = new ForkJoinPool(1024);
+        final ForkJoinPool pool = new ForkJoinPool(64);
         pool.submit(() -> {
             try {
                 getAllIPAddresses(interfaceAddresses.get(0)).stream().parallel().forEach(address -> {
-                    //System.err.println("Probing: " + address);
+                    // System.err.println("Probing: " + address);
                     for (int port : portsToProbe)
                         if (probePort(address, port))
                             System.out.println("Address " + address + ", port: " + port);
