@@ -1,0 +1,6 @@
+.gradle
+build
+
+# Class files are intentionally NOT ignored, see README.md.
+# *.class
+*.swp
