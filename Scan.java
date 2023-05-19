@@ -11,7 +11,7 @@ public class Scan {
             ip = args[0];
         else
             ip = "192.168.8.9";
-        final ForkJoinPool pool = new ForkJoinPool(2048);
+        final ForkJoinPool pool = new ForkJoinPool(64);
         pool.submit(() -> {
             IntStream.range(1, 65536).parallel().forEach(port -> {
                 try {
