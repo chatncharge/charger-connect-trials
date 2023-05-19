@@ -13,7 +13,8 @@ public class ScanForModbus {
         System.out.println("Network Interface: " + networkInterface);
         final List<InterfaceAddress> interfaceAddresses = networkInterface.getInterfaceAddresses();
         System.out.println("Interface Addresses: " + interfaceAddresses);
-        new ForkJoinPool(1024).submit(() -> {
+        final ForkJoinPool pool = new ForkJoinPool(1024);
+        pool.submit(() -> {
             try {
                 getAllIPAddresses(interfaceAddresses.get(0)).stream().parallel().forEach(address -> {
                     //System.err.println("Probing: " + address);
@@ -24,6 +25,7 @@ public class ScanForModbus {
             } catch (final UnknownHostException ignore) {
             }
         });
+        pool.awaitTermination(1000, TimeUnit.SECONDS);
     }
 
     public static boolean probePort(final InetAddress address, final int port) {
