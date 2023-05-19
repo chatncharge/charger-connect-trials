@@ -1,5 +1,8 @@
 import java.io.*;
 import java.net.*;
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.stream.*;
 
 public class Scan {
     public static void main(final String... args) {
@@ -8,17 +11,18 @@ public class Scan {
             ip = args[0];
         else
             ip = "192.168.8.9";
-        for (int i = 0; i < 65535; i++) {
-            int j = i;
-            new Thread(() -> {
+        final ForkJoinPool pool = new ForkJoinPool(2048);
+        pool.submit(() -> {
+            IntStream.range(1, 65536).parallel().forEach(port -> {
                 try {
-                    //System.out.println("Trying " + j);
                     var socket = new Socket();
-                    socket.connect(new InetSocketAddress(ip, j), 1000);
-                    System.out.println("Port " + j + " connected");
+                    socket.connect(new InetSocketAddress(ip, port), 1000);
+                    System.out.println("Port " + port + " connected");
                 } catch (Exception e) {
+                    System.err.println(e.getMessage());
                 }
-            }).start();
-        }
+            });
+        });
+        pool.awaitQuiescence(1000, TimeUnit.SECONDS);
     }
 }
