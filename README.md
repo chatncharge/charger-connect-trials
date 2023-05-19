@@ -5,7 +5,10 @@
 - Ops pulls repo and runs
 
 LAPTOP-P2K8R4D4
+
+
 TIZEN
+hiking tomzn dds238-2 wifi
 6E:94:8F:CB:42:E2
 
 ESP_A1E2E5 Smart Charger
