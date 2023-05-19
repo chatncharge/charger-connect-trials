@@ -1,9 +1,10 @@
 import java.nio.*;
 import java.net.*;
 import java.util.*;
+import java.util.concurrent.*;
 
 public class ScanForModbus {
-    private static final int[] portsToProbe = { 22, 53, 80, 502, 8080, 8081, 8082, 5355 };
+    private static final int[] portsToProbe = { 22, 53, 80, 443, 502, 8080, 8081, 8082, 5355 };
 
     public static void main(final String... args) throws Throwable {
         final InetAddress localhost = args.length > 0 ? InetAddress.getByName(args[0]) : InetAddress.getLocalHost();
@@ -12,11 +13,16 @@ public class ScanForModbus {
         System.out.println("Network Interface: " + networkInterface);
         final List<InterfaceAddress> interfaceAddresses = networkInterface.getInterfaceAddresses();
         System.out.println("Interface Addresses: " + interfaceAddresses);
-        getAllIPAddresses(interfaceAddresses.get(0)).stream().parallel().forEach(address -> {
-            System.err.println("Probing: " + address);
-            for (int port : portsToProbe)
-                if (probePort(address, port))
-                    System.out.println("Address " + address + ", port: " + port);
+        new ForkJoinPool(1024).submit(() -> {
+            try {
+                getAllIPAddresses(interfaceAddresses.get(0)).stream().parallel().forEach(address -> {
+                    //System.err.println("Probing: " + address);
+                    for (int port : portsToProbe)
+                        if (probePort(address, port))
+                            System.out.println("Address " + address + ", port: " + port);
+                });
+            } catch (final UnknownHostException ignore) {
+            }
         });
     }
 
