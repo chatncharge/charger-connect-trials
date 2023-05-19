@@ -25,7 +25,7 @@ public class ScanForModbus {
             } catch (final UnknownHostException ignore) {
             }
         });
-        pool.awaitTermination(1000, TimeUnit.SECONDS);
+        pool.awaitQuiescence(1000, TimeUnit.SECONDS);
     }
 
     public static boolean probePort(final InetAddress address, final int port) {
